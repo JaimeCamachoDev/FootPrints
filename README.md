@@ -10,15 +10,17 @@ _**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o
 </header>
    
 <footer>
-   
+ ---
+## Requerimientos
+
+---
+
+[Cinemachine](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/manual/index.html)
+
 ## Después de crear el repositorio desde la plantilla, asegúrate de revisar lo siguiente:
 
 
 - [ ] Confirmar que **Releases** sigue activado ✅
-
-### 🎨 Personalización visual
-- [ ] Cambiar imagen del banner de portada.
-- [ ] Dejar Topics necesarios.
 
 
 </footer>
