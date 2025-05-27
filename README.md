@@ -1,6 +1,6 @@
 <header>
 
-![Banner](https://github.com/user-attachments/assets/5b933a56-0ece-452a-99c0-1a641485a6b9)
+![406096682-23848ed1-4205-421e-89df-7a7066139400](https://github.com/user-attachments/assets/9bdc4de8-b22f-4e40-9323-8b502ad9f7e9)
 
 # **FootPrints**
 
@@ -13,16 +13,7 @@ _**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o
    
 ## Después de crear el repositorio desde la plantilla, asegúrate de revisar lo siguiente:
 
-### 📸 Social Preview
-- [ ] Sube una imagen `preview.png` personalizada en `Settings → Social Preview`.
 
-### ⚙️ Repository Features
-Desactiva funciones que no necesitas en `Settings → Features`:
-
-- [ ] Desactivar **Projects**
-- [ ] Desactivar **Wiki**
-- [ ] Desactivar **Packages**
-- [ ] Desactivar **Environments** (Deployments)
 - [ ] Confirmar que **Releases** sigue activado ✅
 
 ### 🎨 Personalización visual
