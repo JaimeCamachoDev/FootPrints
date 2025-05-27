@@ -2,9 +2,9 @@
 
 ![Banner](https://github.com/user-attachments/assets/5b933a56-0ece-452a-99c0-1a641485a6b9)
 
-# **{{ repo-name }}**
+# **FootPrints**
 
-_**{{ repo-description }}**_
+_**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o misiones dirigidas.**_
 
 
 </header>
