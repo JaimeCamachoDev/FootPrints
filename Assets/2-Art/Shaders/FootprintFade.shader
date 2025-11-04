@@ -23,17 +23,36 @@ Shader "Hidden/Footprints/Fade"
             #pragma fragment Frag
             #pragma target 2.0
 
-            #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
+            #include "UnityCG.cginc"
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
+            sampler2D _MainTex;
+
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            Varyings Vert(Attributes input)
+            {
+                Varyings output;
+                output.positionCS = UnityObjectToClipPos(input.positionOS);
+                output.uv = input.uv;
+                return output;
+            }
 
             float _Fade;
 
             float4 Frag(Varyings input) : SV_Target
             {
-                float2 uv = input.texcoord;
-                float current = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv).r;
+                float2 uv = input.uv;
+                float current = tex2D(_MainTex, uv).r;
                 float faded = saturate(current * (1.0f - saturate(_Fade)));
                 return float4(faded, faded, faded, 1.0f);
             }

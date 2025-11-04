@@ -30,12 +30,10 @@ Shader "Universal Render Pipeline/Footprints/InstancedDecal"
             HLSLPROGRAM
             #pragma vertex vert
             #pragma fragment frag
-            #pragma multi_compile_fog
             #pragma multi_compile_instancing
             #pragma target 2.0
 
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Fog.hlsl"
 
             struct Attributes
             {
@@ -100,8 +98,6 @@ Shader "Universal Render Pipeline/Footprints/InstancedDecal"
                 clip(alpha - _Cutoff);
 
                 half3 color = diffuse.rgb * instanceColor.rgb;
-                color = MixFog(color, ComputeFogFactor(input.positionCS.z));
-
                 return half4(color, alpha);
             }
 
