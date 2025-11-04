@@ -19,4 +19,20 @@ _**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o
 [Cinemachine](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/manual/index.html)
 
 
+## Escena de ejemplo Footprints RT
+
+La escena **`Assets/3-Scenes/FootprintsRT.unity`** muestra la implementación con RenderTexture (opción A).
+
+1. Abre la escena en Unity y presiona **Play**. Un caminante de prueba recorre un circuito circular y va pintando huellas en la máscara RT.
+2. El objeto **Ground** tiene el componente `FootprintPainterRT`. Sus parámetros principales son:
+   * **Tile Size / Origin**: definen el trozo del mundo que cubre la máscara.
+   * **Resolution / Filter Mode**: controlan el tamaño del RenderTexture y cómo se suaviza.
+   * **Follow Target**: (opcional) reposiciona el tile cuando el caminante se aleja.
+   * **Fade**: atenúa gradualmente la máscara para que las huellas desaparezcan.
+3. El shader del suelo (`GroundFootprintsRT` → `Universal Render Pipeline/Footprints/Ground`) lee la textura global `_FootMask` que configura el `FootprintPainterRT`.
+4. El script `FootprintDemoWalker` (en el objeto **Walker**) llama a `FootprintPainterRT.Stamp` cada vez que toca un paso nuevo. Puedes reutilizarlo como referencia para alimentar la máscara desde tus propios personajes.
+
+> Nota: si no asignas una textura de suela, `FootprintPainterRT` genera una en tiempo de ejecución para que el sistema funcione directamente.
+
+
 </footer>
