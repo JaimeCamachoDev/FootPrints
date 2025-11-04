@@ -23,13 +23,30 @@ Shader "Hidden/Footprints/Stamp"
             #pragma fragment Frag
             #pragma target 2.0
 
-            #include "Packages/com.unity.render-pipelines.core/Runtime/Utilities/Blit.hlsl"
+            #include "UnityCG.cginc"
 
-            TEXTURE2D(_MainTex);
-            SAMPLER(sampler_MainTex);
+            sampler2D _MainTex;
+            sampler2D _StampTex;
 
-            TEXTURE2D(_StampTex);
-            SAMPLER(sampler_StampTex);
+            struct Attributes
+            {
+                float4 positionOS : POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            struct Varyings
+            {
+                float4 positionCS : SV_POSITION;
+                float2 uv : TEXCOORD0;
+            };
+
+            Varyings Vert(Attributes input)
+            {
+                Varyings output;
+                output.positionCS = UnityObjectToClipPos(input.positionOS);
+                output.uv = input.uv;
+                return output;
+            }
 
             float4 _FootTileOriginSize;
             float4 _StampCenterScale;
@@ -37,8 +54,8 @@ Shader "Hidden/Footprints/Stamp"
 
             float4 Frag(Varyings input) : SV_Target
             {
-                float2 uv = input.texcoord;
-                float current = SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, uv).r;
+                float2 uv = input.uv;
+                float current = tex2D(_MainTex, uv).r;
 
                 float2 worldPos = _FootTileOriginSize.xy + uv * _FootTileOriginSize.zw;
                 float2 delta = worldPos - _StampCenterScale.xy;
@@ -52,7 +69,7 @@ Shader "Hidden/Footprints/Stamp"
                 float stamp = 0.0f;
                 if (all(stampUV >= 0.0f) && all(stampUV <= 1.0f))
                 {
-                    stamp = SAMPLE_TEXTURE2D(_StampTex, sampler_StampTex, stampUV).r;
+                    stamp = tex2D(_StampTex, stampUV).r;
                 }
 
                 float result = saturate(current + stamp * saturate(_StampRotationStrength.z));

@@ -45,6 +45,7 @@ namespace Footprints
         private RenderTexture _mask;
         private Material _stampMaterial;
         private Material _fadeMaterial;
+        private Texture2D _runtimeStamp;
         private float _fadeTimer;
 
         private readonly List<Action<RenderTexture>> _onMaskReady = new();
@@ -154,10 +155,7 @@ namespace Footprints
                 }
             }
 
-            if (_stampMaterial != null && footprintStamp != null)
-            {
-                _stampMaterial.SetTexture(StampTextureId, footprintStamp);
-            }
+            EnsureStampTexture();
         }
 
         private void ReleaseResources()
@@ -174,6 +172,12 @@ namespace Footprints
             {
                 DestroyImmediate(_fadeMaterial);
                 _fadeMaterial = null;
+            }
+
+            if (_runtimeStamp != null)
+            {
+                DestroyImmediate(_runtimeStamp);
+                _runtimeStamp = null;
             }
         }
 
@@ -238,6 +242,8 @@ namespace Footprints
                     return;
                 }
             }
+
+            EnsureStampTexture();
 
             float strengthToApply = strength < 0f ? defaultStrength : strength;
             strengthToApply = Mathf.Clamp01(strengthToApply);
@@ -344,6 +350,64 @@ namespace Footprints
 
             Shader.SetGlobalTexture(FootMaskId, _mask);
             Shader.SetGlobalVector(FootTileOriginSizeId, new Vector4(tileOrigin.x, tileOrigin.y, tileSize, tileSize));
+        }
+
+        private void EnsureStampTexture()
+        {
+            if (_stampMaterial == null)
+            {
+                return;
+            }
+
+            Texture stamp = footprintStamp;
+            if (stamp == null)
+            {
+                if (_runtimeStamp == null)
+                {
+                    _runtimeStamp = GenerateRuntimeStampTexture(128);
+                }
+
+                stamp = _runtimeStamp;
+            }
+
+            _stampMaterial.SetTexture(StampTextureId, stamp);
+        }
+
+        private static Texture2D GenerateRuntimeStampTexture(int size)
+        {
+            size = Mathf.Clamp(size, 32, 512);
+            var texture = new Texture2D(size, size, TextureFormat.R8, false, true)
+            {
+                name = "FootprintStampRuntime",
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Bilinear,
+                hideFlags = HideFlags.DontSave
+            };
+
+            float invSize = 1f / (size - 1f);
+            Vector2 heelCenter = new Vector2(0f, -0.45f);
+            Vector2 toeCenter = new Vector2(0f, 0.35f);
+            Vector2 invHeelScale = new Vector2(1f / 0.6f, 1f / 0.55f);
+            Vector2 invToeScale = new Vector2(1f / 0.45f, 1f / 0.45f);
+
+            for (int y = 0; y < size; y++)
+            {
+                for (int x = 0; x < size; x++)
+                {
+                    float u = x * invSize * 2f - 1f;
+                    float v = y * invSize * 2f - 1f;
+
+                    Vector2 sample = new Vector2(u, v);
+                    float heel = Mathf.Clamp01(1f - Vector2.Scale(sample - heelCenter, invHeelScale).magnitude);
+                    float toe = Mathf.Clamp01(1f - Vector2.Scale(sample - toeCenter, invToeScale).magnitude);
+
+                    float value = Mathf.Pow(Mathf.Max(heel, toe), 2f);
+                    texture.SetPixel(x, y, new Color(value, value, value, value));
+                }
+            }
+
+            texture.Apply();
+            return texture;
         }
 
         private Vector2 CalculateTargetOrigin(Vector3 worldPos)
