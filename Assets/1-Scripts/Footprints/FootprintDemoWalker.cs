@@ -50,7 +50,7 @@ namespace Footprints
             transform.position = position;
             if (faceDirection && forward.sqrMagnitude > 0.0001f)
             {
-                transform.rotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             }
 
             while (_stepAccumulator >= stepSpacing)
