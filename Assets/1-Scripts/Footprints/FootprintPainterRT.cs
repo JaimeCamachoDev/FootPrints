@@ -60,6 +60,16 @@ namespace Footprints
         /// </summary>
         public RenderTexture MaskTexture => _mask;
 
+        /// <summary>
+        /// Size in world units covered by the active tile.
+        /// </summary>
+        public float TileSize => tileSize;
+
+        /// <summary>
+        /// Convenience vector containing origin.xy and size.zw for shader consumption.
+        /// </summary>
+        public Vector4 TileOriginSizeVector => new Vector4(tileOrigin.x, tileOrigin.y, tileSize, tileSize);
+
         private void OnEnable()
         {
             EnsureResources();
@@ -209,6 +219,8 @@ namespace Footprints
             RenderTexture.active = _mask;
             GL.Clear(false, true, Color.black);
             RenderTexture.active = active;
+
+            NotifyMaskReady();
         }
 
         /// <summary>
@@ -223,6 +235,7 @@ namespace Footprints
             }
 
             UpdateShaderGlobals();
+            NotifyMaskReady();
         }
 
         /// <summary>

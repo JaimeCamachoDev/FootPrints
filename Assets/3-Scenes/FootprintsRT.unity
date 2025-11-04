@@ -380,6 +380,7 @@ GameObject:
   - component: {fileID: 100204}
   - component: {fileID: 100203}
   - component: {fileID: 100202}
+  - component: {fileID: 100205}
   m_Layer: 0
   m_Name: Ground
   m_TagString: Untagged
@@ -478,6 +479,22 @@ MonoBehaviour:
   defaultStrength: 1
   fadePerSecond: 0.08
   fadeInterval: 0.5
+--- !u!114 &100205
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3bc54870714adc869f85746d043b75, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  painter: {fileID: 100204}
+  targetRenderer: {fileID: 100203}
+  maskPropertyName: _FootMask
+  tilePropertyName: _FootTileOriginSize
 --- !u!1 &100300
 GameObject:
   m_ObjectHideFlags: 0
