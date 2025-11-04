@@ -1,0 +1,169 @@
+{
+  "m_SGVersion": 2,
+  "m_Type": "UnityEditor.ShaderGraph.GraphData",
+  "m_ObjectId": "1",
+  "m_Path": "",
+  "m_IsSubGraph": false,
+  "m_ConcretePrecision": 1,
+  "m_PreviewMode": 0,
+  "m_ActiveTargets": [
+    "UnityEditor.Rendering.Universal.ShaderGraph.UniversalTarget"
+  ],
+  "m_Properties": [
+    {
+      "m_Id": "BaseMap",
+      "m_ObjectId": "p-BaseMap",
+      "m_Guid": "e70d8eebd0aa4a6b8d4dd0b6b906a111",
+      "m_Name": "BaseMap",
+      "m_OverrideReferenceName": "BaseMap",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Texture2DShaderProperty",
+      "m_DefaultType": 0
+    },
+    {
+      "m_Id": "BaseColor",
+      "m_ObjectId": "p-BaseColor",
+      "m_Guid": "9b5d4f5c2b4f4db1a0f3b2c2f5aa1223",
+      "m_Name": "BaseColor",
+      "m_OverrideReferenceName": "BaseColor",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.ColorShaderProperty",
+      "m_Color": {
+        "r": 1,
+        "g": 1,
+        "b": 1,
+        "a": 1
+      },
+      "m_ColorMode": 0
+    },
+    {
+      "m_Id": "FootMask",
+      "m_ObjectId": "p-FootMask",
+      "m_Guid": "06ef0f7b5f0b4d7ab351b2035596c334",
+      "m_Name": "FootMask",
+      "m_OverrideReferenceName": "FootMask",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Texture2DShaderProperty",
+      "m_DefaultType": 0
+    },
+    {
+      "m_Id": "FootNormalMap",
+      "m_ObjectId": "p-FootNormalMap",
+      "m_Guid": "d78ae0a4d03b4a2abbd161c803a13e72",
+      "m_Name": "FootNormalMap",
+      "m_OverrideReferenceName": "FootNormalMap",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Texture2DShaderProperty",
+      "m_DefaultType": 0
+    },
+    {
+      "m_Id": "FootNormalIntensity",
+      "m_ObjectId": "p-FootNormalIntensity",
+      "m_Guid": "d2a0f4a326da4b6a8246f41f4973a0d9",
+      "m_Name": "FootNormalIntensity",
+      "m_OverrideReferenceName": "FootNormalIntensity",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Vector1ShaderProperty",
+      "m_Value": 1.0,
+      "m_RangeValues": {
+        "x": 0.0,
+        "y": 2.0
+      },
+      "m_Flags": 1
+    },
+    {
+      "m_Id": "FootAlbedoDarken",
+      "m_ObjectId": "p-FootAlbedoDarken",
+      "m_Guid": "7fcf4a72874e4570ab1d7ec5a9f5f9a2",
+      "m_Name": "FootAlbedoDarken",
+      "m_OverrideReferenceName": "FootAlbedoDarken",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Vector1ShaderProperty",
+      "m_Value": 0.85,
+      "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+      },
+      "m_Flags": 1
+    },
+    {
+      "m_Id": "FootSmoothnessMul",
+      "m_ObjectId": "p-FootSmoothnessMul",
+      "m_Guid": "a1a058daba6b4ae8a827fb6f89fe1f9a",
+      "m_Name": "FootSmoothnessMul",
+      "m_OverrideReferenceName": "FootSmoothnessMul",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Vector1ShaderProperty",
+      "m_Value": 0.6,
+      "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+      },
+      "m_Flags": 1
+    },
+    {
+      "m_Id": "Smoothness",
+      "m_ObjectId": "p-Smoothness",
+      "m_Guid": "1c6364a8da1f480f9e4ad147b3f0f3e2",
+      "m_Name": "Smoothness",
+      "m_OverrideReferenceName": "Smoothness",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.Vector1ShaderProperty",
+      "m_Value": 0.5,
+      "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+      },
+      "m_Flags": 1
+    },
+    {
+      "m_Id": "SpecularColor",
+      "m_ObjectId": "p-SpecularColor",
+      "m_Guid": "fabe90a7ef5a4b4fb2fd385106c66cba",
+      "m_Name": "SpecularColor",
+      "m_OverrideReferenceName": "SpecularColor",
+      "m_GeneratePropertyBlock": true,
+      "m_Precision": 1,
+      "m_GPUInstanced": false,
+      "m_Hidden": false,
+      "m_Type": "UnityEditor.ShaderGraph.ColorShaderProperty",
+      "m_Color": {
+        "r": 0.04,
+        "g": 0.04,
+        "b": 0.04,
+        "a": 1
+      },
+      "m_ColorMode": 0
+    }
+  ],
+  "m_Keywords": [],
+  "m_Dropdowns": [],
+  "m_CategoryData": [],
+  "m_BlockDescriptors": [],
+  "m_Nodes": [],
+  "m_DebugProperties": []
+}

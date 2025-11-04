@@ -44,7 +44,9 @@ Shader "Universal Render Pipeline/Footprints/Ground"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Shadows.hlsl"
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Fog.hlsl"
+            #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Fog.hlsl"
+
+
 
             struct Attributes
             {
