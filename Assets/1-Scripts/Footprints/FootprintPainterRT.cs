@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_2020_2_OR_NEWER
+using UnityEngine.Experimental.Rendering;
+#endif
 
 namespace Footprints
 {
@@ -255,6 +258,7 @@ namespace Footprints
 
             return renderTexture;
         }
+#endif
 
         /// <summary>
         /// Clears the mask texture to zero (no footprints).
@@ -319,7 +323,17 @@ namespace Footprints
             _stampMaterial.SetVector(StampRotationStrengthId, new Vector4(cos, sin, strengthToApply, 0f));
             _stampMaterial.SetVector(FootTileOriginSizeId, new Vector4(tileOrigin.x, tileOrigin.y, tileSize, tileSize));
 
-            var temp = RenderTexture.GetTemporary(_mask.width, _mask.height, 0, _mask.format);
+            var temp = RenderTexture.GetTemporary(
+                _mask.width,
+                _mask.height,
+                0,
+#if UNITY_2020_2_OR_NEWER
+                _mask.graphicsFormat
+#else
+                _mask.format,
+                RenderTextureReadWrite.Linear
+#endif
+            );
             Graphics.Blit(_mask, temp);
             Graphics.Blit(temp, _mask, _stampMaterial, 0);
             RenderTexture.ReleaseTemporary(temp);
@@ -397,7 +411,17 @@ namespace Footprints
 
             _fadeMaterial.SetFloat(FadeAmountId, fadeAmount);
 
-            var temp = RenderTexture.GetTemporary(_mask.width, _mask.height, 0, _mask.format);
+            var temp = RenderTexture.GetTemporary(
+                _mask.width,
+                _mask.height,
+                0,
+#if UNITY_2020_2_OR_NEWER
+                _mask.graphicsFormat
+#else
+                _mask.format,
+                RenderTextureReadWrite.Linear
+#endif
+            );
             Graphics.Blit(_mask, temp, _fadeMaterial, 0);
             Graphics.Blit(temp, _mask);
             RenderTexture.ReleaseTemporary(temp);

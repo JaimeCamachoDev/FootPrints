@@ -175,7 +175,14 @@ namespace Footprints
 
             if (_maskPropertyId >= 0)
             {
-                _propertyBlock.SetTexture(_maskPropertyId, mask);
+                if (mask != null)
+                {
+                    _propertyBlock.SetTexture(_maskPropertyId, mask);
+                }
+                else
+                {
+                    _propertyBlock.SetTexture(_maskPropertyId, Texture2D.blackTexture);
+                }
             }
 
             if (_tilePropertyId >= 0)
