@@ -43,6 +43,7 @@ namespace Footprints
         [SerializeField] private float fadeInterval = 0.25f;
 
         private RenderTexture _mask;
+        private RenderTextureFormat _maskFormat = RenderTextureFormat.R8;
         private Material _stampMaterial;
         private Material _fadeMaterial;
         private Texture2D _runtimeStamp;
@@ -119,19 +120,17 @@ namespace Footprints
 
         private void EnsureResources()
         {
-            if (_mask == null || _mask.width != resolution || _mask.height != resolution)
+            RenderTextureFormat desiredFormat = ChooseSupportedFormat();
+
+            if (_mask == null || _mask.width != resolution || _mask.height != resolution || _maskFormat != desiredFormat)
             {
                 ReleaseMask();
-                _mask = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.R8)
+                _mask = CreateMask(desiredFormat);
+                if (_mask == null)
                 {
-                    name = $"FootprintMask_{name}",
-                    antiAliasing = 1,
-                    enableRandomWrite = false,
-                    useMipMap = false,
-                    filterMode = filterMode,
-                    wrapMode = TextureWrapMode.Clamp
-                };
-                _mask.Create();
+                    return;
+                }
+                _maskFormat = _mask.format;
                 ClearMask();
             }
             else
@@ -203,6 +202,58 @@ namespace Footprints
                 DestroyImmediate(_mask);
                 _mask = null;
             }
+
+            _maskFormat = RenderTextureFormat.R8;
+        }
+
+        private RenderTextureFormat ChooseSupportedFormat()
+        {
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8))
+            {
+                return RenderTextureFormat.R8;
+            }
+
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RHalf))
+            {
+                return RenderTextureFormat.RHalf;
+            }
+
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R16))
+            {
+                return RenderTextureFormat.R16;
+            }
+
+            return RenderTextureFormat.ARGB32;
+        }
+
+        private RenderTexture CreateMask(RenderTextureFormat format)
+        {
+            var renderTexture = new RenderTexture(resolution, resolution, 0, format)
+            {
+                name = $"FootprintMask_{name}",
+                antiAliasing = 1,
+                enableRandomWrite = false,
+                useMipMap = false,
+                filterMode = filterMode,
+                wrapMode = TextureWrapMode.Clamp
+            };
+
+            if (!renderTexture.Create())
+            {
+                Debug.LogWarning($"FootprintPainterRT failed to create mask using format {format}. Falling back to a supported format.");
+                DestroyImmediate(renderTexture);
+
+                if (format == RenderTextureFormat.ARGB32)
+                {
+                    Debug.LogError("FootprintPainterRT could not create a compatible render texture for the footprint mask.");
+                    return null;
+                }
+
+                RenderTextureFormat fallback = RenderTextureFormat.ARGB32;
+                return CreateMask(fallback);
+            }
+
+            return renderTexture;
         }
 
         /// <summary>
