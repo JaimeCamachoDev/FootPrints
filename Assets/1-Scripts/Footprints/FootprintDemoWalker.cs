@@ -64,10 +64,20 @@ namespace Footprints
 
         private void EmitFootstep(float distanceAlongPath)
         {
-            Vector3 forward = EvaluateForward(distanceAlongPath);
-            if (!TryNormalize(ref forward))
+            Vector3 center = transform.position;
+            Vector3 forward = transform.forward;
+            forward.y = 0f;
+
+            bool hasForward = TryNormalize(ref forward);
+            if (!hasForward)
             {
-                forward = Vector3.forward;
+                forward = EvaluateForward(distanceAlongPath);
+                if (!TryNormalize(ref forward))
+                {
+                    forward = Vector3.forward;
+                }
+
+                center = EvaluatePosition(distanceAlongPath);
             }
 
             Vector3 right = new Vector3(forward.z, 0f, -forward.x);
@@ -75,8 +85,9 @@ namespace Footprints
             {
                 right = Vector3.right;
             }
+
             float side = (_stepIndex & 1) == 0 ? 1f : -1f;
-            Vector3 position = EvaluatePosition(distanceAlongPath) + right * (footSeparation * 0.5f * side);
+            Vector3 position = center + right * (footSeparation * 0.5f * side);
             float yaw = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
 
             painter.Stamp(position, yaw, stampScale);
