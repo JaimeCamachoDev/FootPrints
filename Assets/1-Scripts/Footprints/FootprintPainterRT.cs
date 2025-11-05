@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_2020_2_OR_NEWER
+using UnityEngine.Experimental.Rendering;
+#endif
 
 namespace Footprints
 {
@@ -43,6 +46,11 @@ namespace Footprints
         [SerializeField] private float fadeInterval = 0.25f;
 
         private RenderTexture _mask;
+#if UNITY_2020_2_OR_NEWER
+        private GraphicsFormat _maskFormat = GraphicsFormat.R8_UNorm;
+#else
+        private RenderTextureFormat _maskFormat = RenderTextureFormat.R8;
+#endif
         private Material _stampMaterial;
         private Material _fadeMaterial;
         private Texture2D _runtimeStamp;
@@ -119,19 +127,29 @@ namespace Footprints
 
         private void EnsureResources()
         {
-            if (_mask == null || _mask.width != resolution || _mask.height != resolution)
+            bool needsRecreate;
+#if UNITY_2020_2_OR_NEWER
+            GraphicsFormat desiredFormat = ChooseSupportedFormat();
+            needsRecreate = _mask == null || _mask.width != resolution || _mask.height != resolution || _mask.graphicsFormat != desiredFormat;
+#else
+            RenderTextureFormat desiredFormat = ChooseSupportedFormat();
+            needsRecreate = _mask == null || _mask.width != resolution || _mask.height != resolution || _maskFormat != desiredFormat;
+#endif
+
+            if (needsRecreate)
             {
                 ReleaseMask();
-                _mask = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.R8)
+                _mask = CreateMask(desiredFormat);
+                if (_mask == null)
                 {
-                    name = $"FootprintMask_{name}",
-                    antiAliasing = 1,
-                    enableRandomWrite = false,
-                    useMipMap = false,
-                    filterMode = filterMode,
-                    wrapMode = TextureWrapMode.Clamp
-                };
-                _mask.Create();
+                    return;
+                }
+                _maskFormat =
+#if UNITY_2020_2_OR_NEWER
+                    _mask.graphicsFormat;
+#else
+                    _mask.format;
+#endif
                 ClearMask();
             }
             else
@@ -203,7 +221,125 @@ namespace Footprints
                 DestroyImmediate(_mask);
                 _mask = null;
             }
+
+#if UNITY_2020_2_OR_NEWER
+            _maskFormat = GraphicsFormat.R8_UNorm;
+#else
+            _maskFormat = RenderTextureFormat.R8;
+#endif
         }
+
+#if UNITY_2020_2_OR_NEWER
+        private GraphicsFormat ChooseSupportedFormat()
+        {
+            if (SystemInfo.IsFormatSupported(GraphicsFormat.R8_UNorm, FormatUsage.Render))
+            {
+                return GraphicsFormat.R8_UNorm;
+            }
+
+            if (SystemInfo.IsFormatSupported(GraphicsFormat.R16_UNorm, FormatUsage.Render))
+            {
+                return GraphicsFormat.R16_UNorm;
+            }
+
+            if (SystemInfo.IsFormatSupported(GraphicsFormat.R16_SFloat, FormatUsage.Render))
+            {
+                return GraphicsFormat.R16_SFloat;
+            }
+
+            return GraphicsFormat.R8G8B8A8_UNorm;
+        }
+
+        private RenderTexture CreateMask(GraphicsFormat format)
+        {
+            var descriptor = new RenderTextureDescriptor(resolution, resolution)
+            {
+                graphicsFormat = format,
+                depthBufferBits = 0,
+                msaaSamples = 1,
+                mipCount = 1,
+                autoGenerateMips = false,
+                sRGB = false,
+                useMipMap = false,
+                dimension = UnityEngine.Rendering.TextureDimension.Tex2D
+            };
+
+            var renderTexture = new RenderTexture(descriptor)
+            {
+                name = $"FootprintMask_{name}",
+                enableRandomWrite = false,
+                filterMode = filterMode,
+                wrapMode = TextureWrapMode.Clamp
+            };
+
+            if (!renderTexture.Create())
+            {
+                Debug.LogWarning($"FootprintPainterRT failed to create mask using graphics format {format}. Falling back to a supported format.");
+                DestroyImmediate(renderTexture);
+
+                if (format == GraphicsFormat.R8G8B8A8_UNorm)
+                {
+                    Debug.LogError("FootprintPainterRT could not create a compatible render texture for the footprint mask.");
+                    return null;
+                }
+
+                GraphicsFormat fallback = GraphicsFormat.R8G8B8A8_UNorm;
+                return CreateMask(fallback);
+            }
+
+            return renderTexture;
+        }
+#else
+        private RenderTextureFormat ChooseSupportedFormat()
+        {
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8))
+            {
+                return RenderTextureFormat.R8;
+            }
+
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.RHalf))
+            {
+                return RenderTextureFormat.RHalf;
+            }
+
+            if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R16))
+            {
+                return RenderTextureFormat.R16;
+            }
+
+            return RenderTextureFormat.ARGB32;
+        }
+
+        private RenderTexture CreateMask(RenderTextureFormat format)
+        {
+            var renderTexture = new RenderTexture(resolution, resolution, 0, format)
+            {
+                name = $"FootprintMask_{name}",
+                antiAliasing = 1,
+                enableRandomWrite = false,
+                useMipMap = false,
+                filterMode = filterMode,
+                wrapMode = TextureWrapMode.Clamp
+            };
+
+            if (!renderTexture.Create())
+            {
+                Debug.LogWarning($"FootprintPainterRT failed to create mask using format {format}. Falling back to a supported format.");
+                DestroyImmediate(renderTexture);
+
+                if (format == RenderTextureFormat.ARGB32)
+                {
+                    Debug.LogError("FootprintPainterRT could not create a compatible render texture for the footprint mask.");
+                    return null;
+                }
+
+                RenderTextureFormat fallback = RenderTextureFormat.ARGB32;
+                return CreateMask(fallback);
+            }
+
+            return renderTexture;
+        }
+#endif
 
         /// <summary>
         /// Clears the mask texture to zero (no footprints).
@@ -268,7 +404,17 @@ namespace Footprints
             _stampMaterial.SetVector(StampRotationStrengthId, new Vector4(cos, sin, strengthToApply, 0f));
             _stampMaterial.SetVector(FootTileOriginSizeId, new Vector4(tileOrigin.x, tileOrigin.y, tileSize, tileSize));
 
-            var temp = RenderTexture.GetTemporary(_mask.width, _mask.height, 0, _mask.format);
+            var temp = RenderTexture.GetTemporary(
+                _mask.width,
+                _mask.height,
+                0,
+#if UNITY_2020_2_OR_NEWER
+                _mask.graphicsFormat
+#else
+                _mask.format,
+                RenderTextureReadWrite.Linear
+#endif
+            );
             Graphics.Blit(_mask, temp);
             Graphics.Blit(temp, _mask, _stampMaterial, 0);
             RenderTexture.ReleaseTemporary(temp);
@@ -346,7 +492,17 @@ namespace Footprints
 
             _fadeMaterial.SetFloat(FadeAmountId, fadeAmount);
 
-            var temp = RenderTexture.GetTemporary(_mask.width, _mask.height, 0, _mask.format);
+            var temp = RenderTexture.GetTemporary(
+                _mask.width,
+                _mask.height,
+                0,
+#if UNITY_2020_2_OR_NEWER
+                _mask.graphicsFormat
+#else
+                _mask.format,
+                RenderTextureReadWrite.Linear
+#endif
+            );
             Graphics.Blit(_mask, temp, _fadeMaterial, 0);
             Graphics.Blit(temp, _mask);
             RenderTexture.ReleaseTemporary(temp);
