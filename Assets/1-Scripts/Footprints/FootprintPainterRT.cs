@@ -46,11 +46,7 @@ namespace Footprints
         [SerializeField] private float fadeInterval = 0.25f;
 
         private RenderTexture _mask;
-#if UNITY_2020_2_OR_NEWER
-        private GraphicsFormat _maskFormat = GraphicsFormat.R8_UNorm;
-#else
         private RenderTextureFormat _maskFormat = RenderTextureFormat.R8;
-#endif
         private Material _stampMaterial;
         private Material _fadeMaterial;
         private Texture2D _runtimeStamp;
@@ -127,16 +123,9 @@ namespace Footprints
 
         private void EnsureResources()
         {
-            bool needsRecreate;
-#if UNITY_2020_2_OR_NEWER
-            GraphicsFormat desiredFormat = ChooseSupportedFormat();
-            needsRecreate = _mask == null || _mask.width != resolution || _mask.height != resolution || _mask.graphicsFormat != desiredFormat;
-#else
             RenderTextureFormat desiredFormat = ChooseSupportedFormat();
-            needsRecreate = _mask == null || _mask.width != resolution || _mask.height != resolution || _maskFormat != desiredFormat;
-#endif
 
-            if (needsRecreate)
+            if (_mask == null || _mask.width != resolution || _mask.height != resolution || _maskFormat != desiredFormat)
             {
                 ReleaseMask();
                 _mask = CreateMask(desiredFormat);
@@ -144,12 +133,7 @@ namespace Footprints
                 {
                     return;
                 }
-                _maskFormat =
-#if UNITY_2020_2_OR_NEWER
-                    _mask.graphicsFormat;
-#else
-                    _mask.format;
-#endif
+                _maskFormat = _mask.format;
                 ClearMask();
             }
             else
@@ -222,74 +206,9 @@ namespace Footprints
                 _mask = null;
             }
 
-#if UNITY_2020_2_OR_NEWER
-            _maskFormat = GraphicsFormat.R8_UNorm;
-#else
             _maskFormat = RenderTextureFormat.R8;
-#endif
         }
 
-#if UNITY_2020_2_OR_NEWER
-        private GraphicsFormat ChooseSupportedFormat()
-        {
-            if (SystemInfo.IsFormatSupported(GraphicsFormat.R8_UNorm, FormatUsage.Render))
-            {
-                return GraphicsFormat.R8_UNorm;
-            }
-
-            if (SystemInfo.IsFormatSupported(GraphicsFormat.R16_UNorm, FormatUsage.Render))
-            {
-                return GraphicsFormat.R16_UNorm;
-            }
-
-            if (SystemInfo.IsFormatSupported(GraphicsFormat.R16_SFloat, FormatUsage.Render))
-            {
-                return GraphicsFormat.R16_SFloat;
-            }
-
-            return GraphicsFormat.R8G8B8A8_UNorm;
-        }
-
-        private RenderTexture CreateMask(GraphicsFormat format)
-        {
-            var descriptor = new RenderTextureDescriptor(resolution, resolution)
-            {
-                graphicsFormat = format,
-                depthBufferBits = 0,
-                msaaSamples = 1,
-                mipCount = 1,
-                autoGenerateMips = false,
-                sRGB = false,
-                useMipMap = false,
-                dimension = UnityEngine.Rendering.TextureDimension.Tex2D
-            };
-
-            var renderTexture = new RenderTexture(descriptor)
-            {
-                name = $"FootprintMask_{name}",
-                enableRandomWrite = false,
-                filterMode = filterMode,
-                wrapMode = TextureWrapMode.Clamp
-            };
-
-            if (!renderTexture.Create())
-            {
-                Debug.LogWarning($"FootprintPainterRT failed to create mask using graphics format {format}. Falling back to a supported format.");
-                DestroyImmediate(renderTexture);
-
-                if (format == GraphicsFormat.R8G8B8A8_UNorm)
-                {
-                    Debug.LogError("FootprintPainterRT could not create a compatible render texture for the footprint mask.");
-                    return null;
-                }
-
-                GraphicsFormat fallback = GraphicsFormat.R8G8B8A8_UNorm;
-                return CreateMask(fallback);
-            }
-
-            return renderTexture;
-        }
-#else
         private RenderTextureFormat ChooseSupportedFormat()
         {
             if (SystemInfo.SupportsRenderTextureFormat(RenderTextureFormat.R8))
