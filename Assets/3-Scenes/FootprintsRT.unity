@@ -397,13 +397,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 100200}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: -1, z: 0}
-  m_LocalScale: {x: 7.2225, y: 7.2225, z: 7.2225}
+  m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &100202
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -469,9 +469,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47e702b2dd0343d18907a9b29e80566a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileOrigin: {x: -12, y: -12}
-  tileSize: 24
-  resolution: 1024
+  tileOrigin: {x: -40, y: 0}
+  tileSize: 40
+  resolution: 4096
   filterMode: 1
   clearOnRecenter: 1
   followTarget: {fileID: 100301}
@@ -642,9 +642,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   painter: {fileID: 100204}
-  stepSpacing: 0.1
-  footSeparation: 0.2
-  stampScale: {x: 1, y: 1}
+  stepSpacing: 0.3
+  footSeparation: 0.3
+  stampScale: {x: 0.3, y: 0.3}
   moveSpeed: 1.8
   pathRadius: 6
   pathOffset: {x: 0, y: 0, z: 0}
