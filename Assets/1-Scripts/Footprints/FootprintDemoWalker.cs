@@ -46,11 +46,12 @@ namespace Footprints
 
             Vector3 position = EvaluatePosition(_travelDistance);
             Vector3 forward = EvaluateForward(_travelDistance);
+            bool hasForward = TryNormalize(ref forward);
 
             transform.position = position;
-            if (faceDirection && forward.sqrMagnitude > 0.0001f)
+            if (faceDirection && hasForward)
             {
-                transform.rotation = Quaternion.LookRotation(forward.normalized, Vector3.up);
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             }
 
             while (_stepAccumulator >= stepSpacing)
@@ -63,19 +64,36 @@ namespace Footprints
 
         private void EmitFootstep(float distanceAlongPath)
         {
-            Vector3 forward = EvaluateForward(distanceAlongPath).normalized;
-            if (forward.sqrMagnitude < 0.0001f)
+            Vector3 forward = EvaluateForward(distanceAlongPath);
+            if (!TryNormalize(ref forward))
             {
                 forward = Vector3.forward;
             }
 
-            Vector3 right = new Vector3(forward.z, 0f, -forward.x).normalized;
+            Vector3 right = new Vector3(forward.z, 0f, -forward.x);
+            if (!TryNormalize(ref right))
+            {
+                right = Vector3.right;
+            }
             float side = (_stepIndex & 1) == 0 ? 1f : -1f;
             Vector3 position = EvaluatePosition(distanceAlongPath) + right * (footSeparation * 0.5f * side);
             float yaw = Mathf.Atan2(forward.x, forward.z) * Mathf.Rad2Deg;
 
             painter.Stamp(position, yaw, stampScale);
             _stepIndex++;
+        }
+
+        private static bool TryNormalize(ref Vector3 vector)
+        {
+            float magnitudeSquared = vector.sqrMagnitude;
+            if (magnitudeSquared < 0.0001f)
+            {
+                vector = Vector3.zero;
+                return false;
+            }
+
+            vector /= Mathf.Sqrt(magnitudeSquared);
+            return true;
         }
 
         private Vector3 EvaluatePosition(float distance)
