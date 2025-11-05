@@ -28,6 +28,8 @@ namespace Footprints
         [Header("Tile")]
         [SerializeField] private Vector2 tileOrigin = Vector2.zero;
         [SerializeField, Min(0.1f)] private float tileSize = 50f;
+        [SerializeField, Tooltip("Keep the footprint tile centred on this transform when no follow target is set.")]
+        private bool lockOriginToTransform = true;
         [SerializeField, Range(128, 4096)] private int resolution = 1024;
         [SerializeField] private FilterMode filterMode = FilterMode.Bilinear;
         [SerializeField] private bool clearOnRecenter = true;
@@ -77,6 +79,7 @@ namespace Footprints
         private void OnEnable()
         {
             EnsureResources();
+            UpdateLockedOrigin(false);
             UpdateShaderGlobals();
         }
 
@@ -90,10 +93,14 @@ namespace Footprints
             if (followTarget != null)
             {
                 var desiredOrigin = CalculateTargetOrigin(followTarget.position);
-                if (desiredOrigin != tileOrigin)
+                if (!ApproximatelyEqual(desiredOrigin, tileOrigin))
                 {
                     SetTileOrigin(desiredOrigin, clearOnRecenter);
                 }
+            }
+            else
+            {
+                UpdateLockedOrigin(true);
             }
 
             if (fadePerSecond > 0f && _mask != null)
@@ -117,6 +124,7 @@ namespace Footprints
             if (isActiveAndEnabled)
             {
                 EnsureResources();
+                UpdateLockedOrigin(false);
                 UpdateShaderGlobals();
             }
         }
@@ -447,6 +455,39 @@ namespace Footprints
             }
 
             _stampMaterial.SetTexture(StampTextureId, stamp);
+        }
+
+        private void UpdateLockedOrigin(bool allowClear)
+        {
+            if (!lockOriginToTransform || followTarget != null)
+            {
+                return;
+            }
+
+            Vector2 desiredOrigin = CalculateTransformOrigin(transform.position);
+            if (!ApproximatelyEqual(desiredOrigin, tileOrigin))
+            {
+                SetTileOrigin(desiredOrigin, allowClear && clearOnRecenter);
+            }
+        }
+
+        private Vector2 CalculateTransformOrigin(Vector3 worldPos)
+        {
+            if (!snapOriginToTile)
+            {
+                return new Vector2(worldPos.x - tileSize * 0.5f, worldPos.z - tileSize * 0.5f);
+            }
+
+            float halfSize = tileSize * 0.5f;
+            float snappedX = Mathf.Floor((worldPos.x + halfSize) / tileSize) * tileSize - halfSize;
+            float snappedZ = Mathf.Floor((worldPos.z + halfSize) / tileSize) * tileSize - halfSize;
+            return new Vector2(snappedX, snappedZ);
+        }
+
+        private static bool ApproximatelyEqual(Vector2 a, Vector2 b)
+        {
+            const float epsilon = 0.0001f;
+            return Mathf.Abs(a.x - b.x) <= epsilon && Mathf.Abs(a.y - b.y) <= epsilon;
         }
 
         private static Texture2D GenerateRuntimeStampTexture(int size)
