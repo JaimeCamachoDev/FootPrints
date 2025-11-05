@@ -534,8 +534,9 @@ namespace Footprints
                 return new Vector2(worldPos.x - tileSize * 0.5f, worldPos.z - tileSize * 0.5f);
             }
 
-            float snappedX = Mathf.Floor(worldPos.x / tileSize) * tileSize;
-            float snappedZ = Mathf.Floor(worldPos.z / tileSize) * tileSize;
+            float halfSize = tileSize * 0.5f;
+            float snappedX = Mathf.Floor((worldPos.x + halfSize) / tileSize) * tileSize - halfSize;
+            float snappedZ = Mathf.Floor((worldPos.z + halfSize) / tileSize) * tileSize - halfSize;
             return new Vector2(snappedX, snappedZ);
         }
     }
