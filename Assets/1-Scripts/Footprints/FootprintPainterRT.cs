@@ -258,7 +258,6 @@ namespace Footprints
 
             return renderTexture;
         }
-#endif
 
         /// <summary>
         /// Clears the mask texture to zero (no footprints).
