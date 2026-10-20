@@ -6,7 +6,6 @@
 
 _**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o misiones dirigidas.**_
 
-
 </header>
    
 <footer>
@@ -17,7 +16,6 @@ _**Guía visual con huellas que marcan el camino a seguir. Útil en tutoriales o
 ---
 
 [Cinemachine](https://docs.unity3d.com/Packages/com.unity.cinemachine@3.1/manual/index.html)
-
 
 ## Escena de ejemplo Footprints RT
 
@@ -35,5 +33,24 @@ La escena **`Assets/3-Scenes/FootprintsRT.unity`** muestra la implementación co
 
 > Nota: si no asignas una textura de suela, `FootprintPainterRT` genera una en tiempo de ejecución para que el sistema funcione directamente.
 
-
 </footer>
+
+## Requisitos
+
+* Unity **6000.0.58f2**
+* Render Pipeline: Universal Render Pipeline (URP)
+* Paquetes: Visual Effect Graph, Cinemachine
+
+## Contenido
+
+* **Shader Graph:** `ArenaHuellas`, `Footprint`, `FootprintTerrain`, `FootprintsLit`, `New Shader Graph`
+* **Shaders HLSL:** `FootprintFade`, `FootprintStamp`, `FootprintsHelper`, `GroundFootprintsLit`, `InstancedFootprintDecal`, `TerrainDeformer`
+* **Scripts:** `FootprintDemoWalker`, `FootprintInstancedPool`, `FootprintPainterRT`, `FootprintTerrainBinder`, `TerrainPainter5`, `TerrainPainter6 - copia - copia`
+* **Prefabs:** `Footprint_Objetive`, `Footprint_Objetive_Circle`, `Footprint_Objetive_Square`, `Footprint_Path`, `Ground`, `Walker`
+* **Escenas:** `Assets/3-Scenes/Footprints.unity`, `Assets/3-Scenes/FootprintsRT.unity`, `Assets/3-Scenes/Main.unity`
+
+## Uso
+
+1. Clona el repositorio y añádelo en Unity Hub (*Add project from disk*).
+2. Ábrelo con Unity **6000.0.58f2**.
+3. Abre la escena `Assets/3-Scenes/Footprints.unity` y pulsa **Play**.
