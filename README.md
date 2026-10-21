@@ -43,11 +43,15 @@ La escena **`Assets/3-Scenes/FootprintsRT.unity`** muestra la implementación co
 
 ## Contenido
 
-* **Shader Graph:** `ArenaHuellas`, `Footprint`, `FootprintTerrain`, `FootprintsLit`, `New Shader Graph`
-* **Shaders HLSL:** `FootprintFade`, `FootprintStamp`, `FootprintsHelper`, `GroundFootprintsLit`, `InstancedFootprintDecal`, `TerrainDeformer`
-* **Scripts:** `FootprintDemoWalker`, `FootprintInstancedPool`, `FootprintPainterRT`, `FootprintTerrainBinder`, `TerrainPainter5`, `TerrainPainter6 - copia - copia`
-* **Prefabs:** `Footprint_Objetive`, `Footprint_Objetive_Circle`, `Footprint_Objetive_Square`, `Footprint_Path`, `Ground`, `Walker`
-* **Escenas:** `Assets/3-Scenes/Footprints.unity`, `Assets/3-Scenes/FootprintsRT.unity`, `Assets/3-Scenes/Main.unity`
+Efectos en `Assets/2-Art/2-VFX/`:
+
+| Efecto | VFX | Shader Graph | Shaders | Scripts | Prefabs | Materiales |
+|---|---|---|---|---|---|---|
+| **Footprints** | — | 4 | 5 | — | 6 | 10 |
+| **Sand** | — | 2 | — | 2 | — | — |
+| **Terrain** | — | — | 1 | — | — | — |
+
+**Escenas de demostración:** `Assets/3-Scenes/Footprints.unity`, `Assets/3-Scenes/FootprintsRT.unity`, `Assets/3-Scenes/Main.unity`
 
 ## Uso
 
